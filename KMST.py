@@ -1,43 +1,32 @@
-# Definition of edge class
-class Edge:
-    def __init__(self, u, v, w):
-        self.u = u
-        self.v = v
-        self.w = w
+def kruskal_mst(edges, n):
+    edges.sort(key=lambda e: e[2])  # Sort edges based on weight
+    parent = list(range(n))  # Initialize parent array
+    rank = [0] * n  # Initialize rank array
+    mst = []  # List to store edges in the MST
 
-# Definition of disjoint set class
-class DisjointSet:
-    def __init__(self, n):
-        self.parent = list(range(n))
-        self.rank = [0] * n
+    def find(u):
+        if parent[u] != u:
+            parent[u] = find(parent[u])
+        return parent[u]
 
-    def find(self, u):
-        if self.parent[u] != u:
-            self.parent[u] = self.find(self.parent[u])
-        return self.parent[u]
-
-    def union(self, u, v):
-        u_root, v_root = self.find(u), self.find(v)
+    def union(u, v):
+        u_root, v_root = find(u), find(v)
         if u_root == v_root:
             return
-        if self.rank[u_root] > self.rank[v_root]:
-            self.parent[v_root] = u_root
+        if rank[u_root] > rank[v_root]:
+            parent[v_root] = u_root
         else:
-            self.parent[u_root] = v_root
-            if self.rank[u_root] == self.rank[v_root]:
-                self.rank[v_root] += 1
+            parent[u_root] = v_root
+            if rank[u_root] == rank[v_root]:
+                rank[v_root] += 1
 
-# Definition of Kruskal's algorithm function
-def kruskal_mst(edges, n):
-    edges.sort(key=lambda e: e.w)
-    dsu = DisjointSet(n)
-    mst = []
-    for e in edges:
-        if dsu.find(e.u) != dsu.find(e.v):
-            dsu.union(e.u, e.v)
-            mst.append(e)
-        if len(mst) == n-1:
+    for u, v, w in edges:
+        if find(u) != find(v):
+            union(u, v)
+            mst.append((u, v, w))
+        if len(mst) == n - 1:
             break
+
     return mst
 
 # Take input from user
@@ -46,7 +35,7 @@ m = int(input("Enter the number of edges: "))
 edges = []
 for i in range(m):
     u, v, w = map(int, input("Enter edge {}: ".format(i+1)).split())
-    edges.append(Edge(u-1, v-1, w))
+    edges.append((u - 1, v - 1, w))
 
 # Find the minimum spanning tree using Kruskal's algorithm
 mst = kruskal_mst(edges, n)
@@ -54,7 +43,7 @@ mst = kruskal_mst(edges, n)
 # Print the edges in the minimum spanning tree and their total weight
 print("Edges in the minimum spanning tree:")
 total_weight = 0
-for e in mst:
-    print("{} - {} : {}".format(e.u+1, e.v+1, e.w))
-    total_weight += e.w
+for u, v, w in mst:
+    print("{} - {}: {}".format(u + 1, v + 1, w))
+    total_weight += w
 print("Total weight of the minimum spanning tree:", total_weight)

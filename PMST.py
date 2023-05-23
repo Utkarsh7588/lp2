@@ -1,13 +1,24 @@
-from queue import PriorityQueue
-
 def prim_mst(graph, n):
     mst = []
     visited = [False] * n
-    pq = PriorityQueue()
-    pq.put((0, 0))
+    pq = []
 
-    while not pq.empty():
-        cost, u = pq.get()
+    def enqueue(item):
+        pq.append(item)
+
+    def dequeue():
+        min_cost = float('inf')
+        min_index = -1
+        for i in range(len(pq)):
+            if pq[i][0] < min_cost:
+                min_cost = pq[i][0]
+                min_index = i
+        return pq.pop(min_index)
+
+    enqueue((0, 0))
+
+    while pq:
+        cost, u = dequeue()
 
         if visited[u]:
             continue
@@ -18,7 +29,7 @@ def prim_mst(graph, n):
 
         for v, w in graph[u]:
             if not visited[v]:
-                pq.put((w, v))
+                enqueue((w, v))
                 parent = u
 
     return mst

@@ -1,41 +1,25 @@
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
+# Define the chatbot's knowledge base for customer support
+knowledge_base = {
+    "hello": "Hello! How can I assist you today?",
+    "order status": "To check your order status, please provide your order number.",
+    "payment issue": "I'm sorry to hear that you're facing payment issues. Please contact our support team at support@example.com for assistance.",
+    "product information": "Our products are known for their high quality and durability. Is there any specific product you would like to know about?",
+    "default": "I apologize, but I am unable to assist with your request. Please contact our support team for further assistance."
+}
 
-# download necessary resources for NLTK
-nltk.download('punkt')
-nltk.download('wordnet')
 
-# preprocess user input
-def preprocess_input(input):
-    tokens = word_tokenize(input.lower())
-    lemmatizer = WordNetLemmatizer()
-    lemmatized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
-    return lemmatized_tokens
+def customer_support_chatbot():
+    while True:
+ 
+        user_input = input("User: ")
 
-# define chatbot responses
-# define chatbot responses
-# define chatbot responses
-def respond(input_text):
-    input_tokens = preprocess_input(input_text)
-    if 'hello' | 'hi' in input_tokens:
-        return 'Hi there!'
-    elif 'how are you' in input_tokens:
-        return 'I am doing well, thank you!'
-    elif 'business hours' in input_tokens:
-        return 'Our business hours are Monday through Friday, 9am to 5pm.'
-    elif 'returns' in input_tokens or 'refunds' in input_tokens:
-        return 'You can find information about our returns and refunds policy on our website at example.com/returns-and-refunds.'
-    else:
-        return 'I am sorry, I am unable to answer your question. Would you like me to escalate your request to a human support representative?'
 
-# run chatbot
-while True:
-    user_input = input('You: ')
-    response = respond(user_input)
-    print('Chatbot:', response)
-    if 'escalate' in preprocess_input(response):
-        print('Please wait while I connect you to a human support representative.')
-        # code to connect to human support would be added here
-        break
+        if user_input.lower() in knowledge_base:
+          
+            print("ChatBot:", knowledge_base[user_input.lower()])
+        else:
+         
+            print("ChatBot:", knowledge_base["default"])
 
+
+customer_support_chatbot()
