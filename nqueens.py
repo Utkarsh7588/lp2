@@ -1,60 +1,57 @@
-import queue
-import random
+def is_safe(board, row, col, N):
+    # Check if there is a queen in the same row
+    for i in range(col):
+        if board[row][i] == 1:
+            return False
+
+    # Check if there is a queen in the upper diagonal on the left side
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+
+    # Check if there is a queen in the lower diagonal on the left side
+    for i, j in zip(range(row, N, 1), range(col, -1, -1)):
+        if board[i][j] == 1:
+            return False
+
+    # The position is safe
+    return True
 
 
-class QueenBoard:
-    def __init__(self, n, state=None):
-        self.n = n
-        if state is None:
-            self.state = [random.randint(0, n - 1) for _ in range(n)]
-        else:
-            self.state = state
+def solve_n_queens(board, col, N):
+    # Base case: all queens have been placed
+    if col == N:
+        return True
 
-    def heuristic_cost(self):
-        cost = 0
-        for i in range(self.n):
-            for j in range(i + 1, self.n):
-                if self.state[i] == self.state[j]:
-                    cost += 1
-                elif abs(self.state[i] - self.state[j]) == j - i:
-                    cost += 1
-        return cost
+    # Try placing the queen in each row of the current column
+    for i in range(N):
+        if is_safe(board, i, col, N):
+            # Place the queen in the current position
+            board[i][col] = 1
 
-    def is_valid(self):
-        return self.heuristic_cost() == 0
+            # Recursively place the remaining queens
+            if solve_n_queens(board, col + 1, N):
+                return True
 
-    def get_successors(self):
-        successors = []
-        for col in range(self.n):
-            for row in range(self.n):
-                if self.state[col] != row:
-                    successor_state = list(self.state)
-                    successor_state[col] = row
-                    successors.append(QueenBoard(self.n, successor_state))
-        return successors
+            # Backtrack: remove the queen from the current position
+            board[i][col] = 0
 
-    def __lt__(self, other):
-        return self.heuristic_cost() < other.heuristic_cost()
+    # Could not find a safe position for the queen in the current column
+    return False
 
 
-def solve_n_queens(n):
-    start_state = QueenBoard(n)
-    Q_priority_queue = queue.PriorityQueue()
-    Q_priority_queue.put(start_state)
+def print_board(board):
+    N = len(board)
+    for i in range(N):
+        for j in range(N):
+            print(board[i][j], end=" ")
+        print()
 
-    while not Q_priority_queue.empty():
-        current_board = Q_priority_queue.get()
-        if current_board.is_valid():
-            return current_board.state
-        for successor in current_board.get_successors():
-            Q_priority_queue.put(successor)
+# Driver code
+N = int(input("Enter the number of queens: "))
+board = [[0 for i in range(N)] for j in range(N)]
 
-    return None
-
-
-if __name__ == '__main__':
-    solution = solve_n_queens(8)
-    if solution is not None:
-        print(solution)
-    else:
-        print("No solution found")
+if solve_n_queens(board, 0, N):
+    print_board(board)
+else:
+    print("Solution does not exist")

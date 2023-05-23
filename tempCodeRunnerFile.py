@@ -1,1 +1,1 @@
-    def find(u):
+            board[i][col] = 0
