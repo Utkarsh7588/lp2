@@ -37,5 +37,20 @@ start = int(input("Enter the start vertex: ")) - 1
 mst = dijkstra_mst(graph, n, start)
 
 print("Edges in the minimum spanning tree:")
+visited_edges = set()  # Keep track of visited edges
+total_cost = 0  # Initialize total cost
+
 for edge in mst:
-    print(f"{edge[0]+1} - {edge[1]+1}: {edge[2]}")
+    u, v, weight = edge
+
+    # Check if the edge has already been visited
+    if (u, v) in visited_edges or (v, u) in visited_edges:
+        continue
+
+    visited_edges.add((u, v))
+    visited_edges.add((v, u))
+    total_cost += weight
+
+    print(f"{u+1} - {v+1}: {weight}")
+
+print("Total Cost of the Minimum Spanning Tree:", total_cost)

@@ -12,14 +12,16 @@ def customer_support_chatbot():
     while True:
  
         user_input = input("User: ")
+        response=False
 
-
-        if user_input.lower() in knowledge_base:
+        for v in knowledge_base:
+            if v in user_input.lower() :
           
-            print("ChatBot:", knowledge_base[user_input.lower()])
-        else:
-         
-            print("ChatBot:", knowledge_base["default"])
+                print("ChatBot:", knowledge_base[v])
+                response=True
+        if not response:
+            print("ChatBot:",knowledge_base["default"])        
+            
 
 
 customer_support_chatbot()

@@ -1,32 +1,32 @@
-n = int(input("Enter the number of jobs: "))
-profit = []
-jobs = []
-deadline = []
+def kruskal_mst(edges,n):
+    edges.sort(key=lambda e:e[2])
+    parent=list(range(n))
+    rank=[0]*n
+    mst=[]
 
-for i in range(n):
-    p, j, d = input("Enter job {}: ".format(i+1)).split()
-    profit.append(int(p))
-    jobs.append(j)
-    deadline.append(int(d))
+    def find(u):
+        if parent[u]!=u:
+            parent[u]=find(parent[u])
+        return parent[u]
 
-profitNJobs = list(zip(profit, jobs, deadline))
-profitNJobs = sorted(profitNJobs, key=lambda x: x[0], reverse=True)
+    def union(u,v):
+        u_root,v_root=find(u),find(v)
 
-max_deadline = max(deadline)  # Find the maximum deadline
+        if u_root==v_root:
+            return
+        if rank[u_root]>rank[v_root]:
+            parent[v_root]=u_root    
+        else:
+            parent[u_root]=v_root
+            if rank[u_root]==rank[v_root]:
+                rank[v_root]+=1
 
-slot = [0] * (max_deadline + 1)  # Initialize the slot list with enough elements
-profit = 0
-ans = ['null'] * (max_deadline + 1)  # Initialize ans list with enough elements
-
-for i in range(len(jobs)):
-    job = profitNJobs[i]
-    # check if slot is occupied
-    for j in range(job[2], 0, -1):
-        if slot[j] == 0:
-            ans[j] = job[1]
-            profit += job[0]
-            slot[j] = 1
+    for u,v,w in edges:
+        if find(u)!=find(v):
+            union(u,v)
+            mst.append((u,v,w))
+        if len(mst)==n-1:
             break
+            
 
-print("Jobs scheduled buddy:", ans[1:])
-print("Total profit:", profit)
+

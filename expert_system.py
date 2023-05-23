@@ -38,9 +38,19 @@ for index, row in df.iterrows():
     for metric, score_mapping in evaluation_rules.items():
         value = row[metric]
 
+          
+
         if value in score_mapping:
             score = score_mapping[value]
             performance[metric] = score
+        else:
+            if(metric== 'Adherence to Deadlines'):
+                if(value==1):
+                    performance[metric]=10
+                else :
+                    performance[metric]=5  
+            else:
+                performance[metric]=value    
 
     overall_score = sum(performance.values()) / len(performance)
 

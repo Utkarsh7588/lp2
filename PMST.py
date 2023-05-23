@@ -1,49 +1,51 @@
+import sys
+
 def prim_mst(graph, n):
     mst = []
     visited = [False] * n
-    pq = []
+    key = [sys.maxsize] * n
+    parent = [-1] * n
 
-    def enqueue(item):
-        pq.append(item)
+    key[0] = 0  # Start with the first vertex
 
-    def dequeue():
-        min_cost = float('inf')
-        min_index = -1
-        for i in range(len(pq)):
-            if pq[i][0] < min_cost:
-                min_cost = pq[i][0]
-                min_index = i
-        return pq.pop(min_index)
+    for _ in range(n):
+        min_key = sys.maxsize
+        u = -1
 
-    enqueue((0, 0))
+        # Find the vertex with the minimum key value among the unvisited vertices
+        for v in range(n):
+            if not visited[v] and key[v] < min_key:
+                min_key = key[v]
+                u = v
 
-    while pq:
-        cost, u = dequeue()
-
-        if visited[u]:
-            continue
         visited[u] = True
 
-        if u != 0:
-            mst.append((parent, u, cost))
+        # Add the edge to the MST
+        if parent[u] != -1:
+            mst.append((parent[u], u, graph[u][parent[u]]))
 
-        for v, w in graph[u]:
-            if not visited[v]:
-                enqueue((w, v))
-                parent = u
+        # Update key values of adjacent vertices
+        for v in range(n):
+            if (
+                graph[u][v] != 0
+                and not visited[v]
+                and graph[u][v] < key[v]
+            ):
+                key[v] = graph[u][v]
+                parent[v] = u
 
     return mst
 
 n = int(input("Enter the number of vertices: "))
 m = int(input("Enter the number of edges: "))
-graph = [[] for _ in range(n)]
+graph = [[0] * n for _ in range(n)]
 
 for i in range(m):
-    u, v, w = map(int, input("Enter edge {}: ".format(i+1)).split())
-    graph[u-1].append((v-1, w))
-    graph[v-1].append((u-1, w))
+    u, v, w = map(int, input(f"Enter edge {i+1} (u v w): ").split())
+    graph[u-1][v-1] = w
+    graph[v-1][u-1] = w
 
 mst = prim_mst(graph, n)
 print("Edges in the MST:")
 for u, v, cost in mst:
-    print("{} - {}: {}".format(u+1, v+1, cost))
+    print(f"{u+1} - {v+1}: {cost}")
