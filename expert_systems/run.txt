@@ -1,0 +1,2 @@
+g++ cplus.cpp
+./a.out
